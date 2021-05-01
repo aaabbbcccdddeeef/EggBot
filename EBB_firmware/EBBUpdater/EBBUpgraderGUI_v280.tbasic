@@ -104,7 +104,7 @@ CallBack Function cbDialog() As Long
       '---Add controls
       Control Add Button   CBHNDL, %ID_StartUpdateButton, "Start Update",           160,  10,  80,  25, %BS_NOTIFY | %WS_TABSTOP Call cbButton
       Control Add Button   CBHNDL, %ID_ExitButton, "Exit",                          160, 350,  80,  25, %BS_NOTIFY | %WS_TABSTOP Call cbButton
-      control add button   Cbhndl, %ID_ManualButton, "Manual",                      320, 350,  60,  25, %BS_NOTIFY | %WS_TABSTOP Call cbButton
+      control add button   Cbhndl, %ID_ManualButton, "Advanced",                    300, 350,  80,  25, %BS_NOTIFY | %WS_TABSTOP Call cbButton
       Control Add Textbox  CBHNDL, %ID_CommandOutputTexBox, "",                      10,  40, 380, 300, %ES_MULTILINE | %ES_AUTOVSCROLL | %WS_HSCROLL | %ES_AUTOHSCROLL | %WS_VSCROLL | %ES_READONLY
 
       control add frame    Cbhndl, %ID_HEXSelectFrame, "HEX file selection",         10, 380, 375,  75
@@ -123,12 +123,12 @@ CallBack Function cbDialog() As Long
       Control Show State   Cbhndl, %ID_HEXSelectButton, %SW_HIDE
       Control Show State   Cbhndl, %ID_HEXSelectTextBox, %SW_HIDE
 
-      Control add frame    Cbhndl, %ID_COMSelectFrame, "COM port selection",         10, 460, 375,  45
+      Control add frame    Cbhndl, %ID_COMSelectFrame, "COM port selection (e.g. COM12)",10, 460, 375,  45
       control add Option   Cbhndl, %ID_COMSelectAutoOption, "Auto",                  20, 480,  60,  20, %WS_GROUP OR %WS_TABSTOP
-      control add option   Cbhndl, %ID_COMSelectManualOption, "Manual (ex COM12)",  105, 480, 120,  20
-      control add option   Cbhndl, %ID_COMSelectNoneOption, "None",                 320, 480,  60,  20
+      control add option   Cbhndl, %ID_COMSelectManualOption, "Manual",             105, 480,  55,  20
+      control add option   Cbhndl, %ID_COMSelectNoneOption, "Direct Bootloader",    260, 480, 200,  20
       CONTROL SET OPTION   Cbhndl, %ID_COMSelectAutoOption, %ID_COMSelectAutoOption, %ID_COMSelectNoneOption
-      Control Add Textbox  CBHNDL, %ID_COMSelectTextBox, "",                        225, 480,  60,  20
+      Control Add Textbox  CBHNDL, %ID_COMSelectTextBox, "",                        170, 480,  60,  20
 
       Control Show State   Cbhndl, %ID_COMSelectFrame, %SW_HIDE
       Control Show State   Cbhndl, %ID_COMSelectAutoOption, %SW_HIDE
@@ -390,6 +390,8 @@ CallBack Function cbButton() As Long
               Control Show State   Cbhndl, %ID_COMSelectManualOption, %SW_HIDE
               Control Show State   Cbhndl, %ID_COMSelectTextBox, %SW_HIDE
               Control Show State   Cbhndl, %ID_COMSelectNoneOption, %SW_HIDE
+              
+              control set text     Cbhndl, %ID_ManualButton, "Advanced"
 
               bAdvancedModeActive = false
             else
@@ -408,6 +410,8 @@ CallBack Function cbButton() As Long
               Control Show State   Cbhndl, %ID_COMSelectTextBox, %SW_SHOW
               Control Show State   Cbhndl, %ID_COMSelectNoneOption, %SW_SHOW
 
+              control set text     Cbhndl, %ID_ManualButton, "Auto"
+              
               bAdvancedModeActive = true
             endif
 
