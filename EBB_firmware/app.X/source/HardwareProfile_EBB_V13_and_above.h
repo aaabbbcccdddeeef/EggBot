@@ -171,15 +171,21 @@
 	#define Dir2AltIO			LATAbits.LATA2
 	#define Dir2AltIO_TRIS		TRISAbits.TRISA2
     
-    /** R C   S E R V O  ************************************************/
+  /** R C   S E R V O  ************************************************/
 
-    #define RCServoPowerIO_TRIS TRISAbits.TRISA3
-    #define RCServoPowerIO      LATAbits.LATA3
-    #define RCServoPowerIO_PORT PORTAbits.RA3
-    #define RCSERVO_POWER_ON    1
-    #define RCSERVO_POWER_OFF   0
+  #define RCServoPowerIO_TRIS   TRISAbits.TRISA3
+  #define RCServoPowerIO        LATAbits.LATA3
+  #define RCServoPowerIO_PORT   PORTAbits.RA3
+  #define RCSERVO_POWER_ON      1
+  #define RCSERVO_POWER_OFF     0
     
-	/** G E N E R I C ***************************************************/
+	#define RCServoIO_TRIS        TRISBbits.TRISB1
+  #define RCServoIO             LATBbits.LATB1
+  #define RCServoIO_PORT        PORTBbits.RB1
+  #define RCSERVO_SIGNAL_OUTPUT 0
+  #define RCSERVO_SIGNAL_INPUT  1
+  
+  /** G E N E R I C ***************************************************/
 	
 	#define mLED_USB_Toggle()	mLED_1 = !mLED_1;
 	

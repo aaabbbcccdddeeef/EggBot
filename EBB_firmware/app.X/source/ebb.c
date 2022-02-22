@@ -264,6 +264,8 @@
 //                  Issue 153: Add optional parameter to ES command to disable
 //                    motors.
 //                  Fix bug in ES command that didn't send return packet
+// 2.8.1 02/22/22 - Turned off RC servo signal (RB1) whenever we turn off power
+//                    to the servo.
 
 #include <p18cxxx.h>
 #include <usart.h>
@@ -1012,7 +1014,8 @@ void EBB_Init(void)
     // Set up RC Servo power control to be off
     RCServoPowerIO = RCSERVO_POWER_OFF;
     RCServoPowerIO_TRIS = OUTPUT_PIN;
-
+    RCServoIO_TRIS = RCSERVO_SIGNAL_INPUT;
+    
 	SolenoidState = SOLENOID_ON;
 	DriverConfiguration = PIC_CONTROLS_DRIVERS;
 	PenState = PEN_UP;
@@ -2470,6 +2473,7 @@ void process_SP(PenStateType NewState, UINT16 CommandDuration)
   }
 
   RCServoPowerIO = RCSERVO_POWER_ON;
+  RCServoIO_TRIS = RCSERVO_SIGNAL_OUTPUT;
   gRCServoPoweroffCounterMS = gRCServoPoweroffCounterReloadMS;
 
   // Now schedule the movement with the RCServo2 function
