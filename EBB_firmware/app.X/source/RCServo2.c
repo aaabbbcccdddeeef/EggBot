@@ -138,6 +138,7 @@ UINT16 g_servo2_rate_up;
 UINT16 g_servo2_rate_down;
 UINT8  g_servo2_RPn;
 
+
 /*
 The idea with RCServo2 is to use the ECCP2 module and timer 3.
 We divide time into 24ms periods. Inside each 24ms period, we
@@ -218,7 +219,6 @@ void RCServo2_Init(void)
 	g_servo2_rate_down = 400;
 	process_SP(PEN_UP, 0);			// Start servo up
   RCServoPowerIO = RCSERVO_POWER_OFF;
-  RCServoIO_TRIS = RCSERVO_SIGNAL_INPUT;
 }
 
 // Return the current channel that is associated with the PPS output pin
@@ -380,7 +380,6 @@ UINT8 RCServo2_Move(
       if (RPn == 4)
       {
         RCServoPowerIO = RCSERVO_POWER_ON;
-        RCServoIO_TRIS = RCSERVO_SIGNAL_OUTPUT;
         gRCServoPoweroffCounterMS = gRCServoPoweroffCounterReloadMS;
       }
 

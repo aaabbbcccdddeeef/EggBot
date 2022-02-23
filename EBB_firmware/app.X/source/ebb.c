@@ -1011,11 +1011,10 @@ void EBB_Init(void)
 	PenUpDownIO = 0;
 	PenUpDownIO_TRIS = OUTPUT_PIN;
     
-    // Set up RC Servo power control to be off
-    RCServoPowerIO = RCSERVO_POWER_OFF;
-    RCServoPowerIO_TRIS = OUTPUT_PIN;
-    RCServoIO_TRIS = RCSERVO_SIGNAL_INPUT;
-    
+  // Set up RC Servo power control to be off
+  RCServoPowerIO = RCSERVO_POWER_OFF;
+  RCServoPowerIO_TRIS = OUTPUT_PIN;
+  
 	SolenoidState = SOLENOID_ON;
 	DriverConfiguration = PIC_CONTROLS_DRIVERS;
 	PenState = PEN_UP;
@@ -2473,7 +2472,6 @@ void process_SP(PenStateType NewState, UINT16 CommandDuration)
   }
 
   RCServoPowerIO = RCSERVO_POWER_ON;
-  RCServoIO_TRIS = RCSERVO_SIGNAL_OUTPUT;
   gRCServoPoweroffCounterMS = gRCServoPoweroffCounterReloadMS;
 
   // Now schedule the movement with the RCServo2 function

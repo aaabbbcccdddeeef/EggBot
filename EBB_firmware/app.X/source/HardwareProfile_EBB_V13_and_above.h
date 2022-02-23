@@ -178,12 +178,6 @@
   #define RCServoPowerIO_PORT   PORTAbits.RA3
   #define RCSERVO_POWER_ON      1
   #define RCSERVO_POWER_OFF     0
-    
-	#define RCServoIO_TRIS        TRISBbits.TRISB1
-  #define RCServoIO             LATBbits.LATB1
-  #define RCServoIO_PORT        PORTBbits.RB1
-  #define RCSERVO_SIGNAL_OUTPUT 0
-  #define RCSERVO_SIGNAL_INPUT  1
   
   /** G E N E R I C ***************************************************/
 	

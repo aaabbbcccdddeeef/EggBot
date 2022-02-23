@@ -358,15 +358,25 @@ void low_ISR(void)
                     }
                 }
 
-                // Set up the PPS routing for the CCP2
-                *(gRC2RPORPtr + gRC2RPn[gRC2Ptr]) = 18;	// 18 = CCP2
-
+                // New for 2.8.1: Don't set up RPn for RC Servo output unless the 
+                // servo power is on
+                if ((RCServoPowerIO == RCSERVO_POWER_ON) || (gRC2RPn[gRC2Ptr] != g_servo2_RPn))
+                {
+                  // Set up the PPS routing for the CCP2
+                  *(gRC2RPORPtr + gRC2RPn[gRC2Ptr]) = 18;	// 18 = CCP2
+                }
+                else
+                {
+                  SetPinLATFromRPn(gRC2RPn[gRC2Ptr], 0);
+                }
+                
                 // Disable interrupts (high)
                 INTCONbits.GIEH = 0;
 
                 // Load up the new compare time
                 CCPR2H = gRC2Value[gRC2Ptr] >> 8;
                 CCPR2L = gRC2Value[gRC2Ptr] & 0xFF;
+
                 CCP2CONbits.CCP2M = 0b0000;
                 CCP2CONbits.CCP2M = 0b1001;
 
@@ -532,7 +542,6 @@ void low_ISR(void)
             if (gRCServoPoweroffCounterMS == 0)
             {
                 RCServoPowerIO = RCSERVO_POWER_OFF;
-                RCServoIO_TRIS = RCSERVO_SIGNAL_INPUT;
             }
         }
 
@@ -3044,12 +3053,10 @@ void parse_SR_packet(void)
         if (State)
         {
             RCServoPowerIO = RCSERVO_POWER_ON;
-            RCServoIO_TRIS = RCSERVO_SIGNAL_OUTPUT;
         }
         else
         {
             RCServoPowerIO = RCSERVO_POWER_OFF;
-            RCServoIO_TRIS = RCSERVO_SIGNAL_INPUT;
         }
     }
     
