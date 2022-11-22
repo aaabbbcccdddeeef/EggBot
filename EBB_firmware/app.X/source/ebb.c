@@ -434,15 +434,18 @@ void high_ISR(void)
             
             // For acceleration, we now add a bit to StepAdd each time through as well
             CurrentCommand.Rate[0].value += CurrentCommand.Accel[0];
-            if (CurrentCommand.Rate[0].bytes.b4 & 0x80)
-            {
-              CurrentCommand.Rate[0].bytes.b4 += 0x80;
-            }
             acc_union[0].value = acc_union[0].value + CurrentCommand.Rate[0].value;
             if (acc_union[0].bytes.b4 & 0x80)
             {
               acc_union[0].bytes.b4 = acc_union[0].bytes.b4 & 0x7F;
-              OutByte = OutByte | STEP1_BIT;
+              if (CurrentCommand.Rate[0].bytes.b4 & 0x80)
+              {
+                OutByte = OutByte | STEP1_BIT;
+              }
+              else
+              {
+                OutByte = OutByte & ~STEP1_BIT;
+              }
               TookStep = TRUE;
             }
 
@@ -450,15 +453,18 @@ void high_ISR(void)
             
             // For acceleration, we now add a bit to StepAdd each time through as well
             CurrentCommand.Rate[1].value += CurrentCommand.Accel[1];
-            if (CurrentCommand.Rate[1].bytes.b4 & 0x80)
-            {
-              CurrentCommand.Rate[1].bytes.b4 += 0x80;
-            }
             acc_union[1].value = acc_union[1].value + CurrentCommand.Rate[1].value;
             if (acc_union[1].bytes.b4 & 0x80)
             {
               acc_union[1].bytes.b4 = acc_union[1].bytes.b4 & 0x7F;
-              OutByte = OutByte | STEP2_BIT;
+              if (CurrentCommand.Rate[1].bytes.b4 & 0x80)
+              {
+                OutByte = OutByte | STEP2_BIT;
+              }
+              else
+              {
+                OutByte = OutByte & ~STEP2_BIT;
+              }
               TookStep = TRUE;
             }
           }
@@ -470,6 +476,14 @@ void high_ISR(void)
           // Only do this if there are steps left to take
           if (CurrentCommand.Active[0])
           {
+            if ((INT32)CurrentCommand.Rate[0].value + CurrentCommand.Accel[0] < 0)
+            {
+              // Negate the acceleration value so it starts adding to Rate
+              CurrentCommand.Accel[0] = -CurrentCommand.Accel[0];
+              // Invert the direction so we start moving in the other direction
+              CurrentCommand.DirBits = CurrentCommand.DirBits ^ DIR1_BIT;
+            }
+
             // For acceleration, we now add a bit to StepAdd each time through as well
             CurrentCommand.Rate[0].value += CurrentCommand.Accel[0];
             if (CurrentCommand.Rate[0].bytes.b4 & 0x80)
@@ -491,6 +505,14 @@ void high_ISR(void)
           }
           if (CurrentCommand.Active[1])
           {
+            if ((INT32)CurrentCommand.Rate[1].value + CurrentCommand.Accel[1] < 0)
+            {
+              // Negate the acceleration value so it starts adding to Rate
+              CurrentCommand.Accel[1] = -CurrentCommand.Accel[1];
+              // Invert the direction so we start moving in the other direction
+              CurrentCommand.DirBits = CurrentCommand.DirBits ^ DIR2_BIT;
+            }
+
             // For acceleration, we now add a bit to StepAdd each time through as well
             CurrentCommand.Rate[1].value += CurrentCommand.Accel[1];
             if (CurrentCommand.Rate[1].bytes.b4 & 0x80)
@@ -1498,20 +1520,6 @@ void parse_LT_packet (void)
   Enable1IO = ENABLE_MOTOR;
   Enable2IO = ENABLE_MOTOR;
 
-  // First, set the direction bits
-  if (Rate1 < 0)
-  {
-    move.DirBits = move.DirBits | DIR1_BIT;
-    Rate1 = -Rate1;
-  }
-  if (Rate2 < 0)
-  {
-    move.DirBits = move.DirBits | DIR2_BIT;
-    Rate2 = -Rate2;
-  }
-
-  // Rates are now positive 31 bit integers.
-  
   // Subtract off half of the Accel term from the Rate term before we add the
   // move to the queue. Why? Because it makes the math cleaner (see LT command
   // documentation)
