@@ -438,13 +438,14 @@ void high_ISR(void)
             if (acc_union[0].bytes.b4 & 0x80)
             {
               acc_union[0].bytes.b4 = acc_union[0].bytes.b4 & 0x7F;
+              OutByte = OutByte | STEP1_BIT;
               if (CurrentCommand.Rate[0].bytes.b4 & 0x80)
               {
-                OutByte = OutByte | STEP1_BIT;
+                OutByte = OutByte | DIR1_BIT;
               }
               else
               {
-                OutByte = OutByte & ~STEP1_BIT;
+                OutByte = OutByte & ~DIR1_BIT;
               }
               TookStep = TRUE;
             }
@@ -457,13 +458,14 @@ void high_ISR(void)
             if (acc_union[1].bytes.b4 & 0x80)
             {
               acc_union[1].bytes.b4 = acc_union[1].bytes.b4 & 0x7F;
+              OutByte = OutByte | STEP2_BIT;
               if (CurrentCommand.Rate[1].bytes.b4 & 0x80)
               {
-                OutByte = OutByte | STEP2_BIT;
+                OutByte = OutByte | DIR2_BIT;
               }
               else
               {
-                OutByte = OutByte & ~STEP2_BIT;
+                OutByte = OutByte & ~DIR2_BIT;
               }
               TookStep = TRUE;
             }
@@ -537,7 +539,7 @@ void high_ISR(void)
         // to see if the move has been completed here (to load the next command
         // immediately rather than waiting for the next tick). This primarily gives
         // us simpler math when figuring out how long moves will take.
-        if (CurrentCommand.Active[0] ||  CurrentCommand.Active[1])
+        if (CurrentCommand.Active[0] || CurrentCommand.Active[1])
         {
           AllDone = FALSE;
         }
@@ -546,7 +548,7 @@ void high_ISR(void)
           if (DriverConfiguration == PIC_CONTROLS_DRIVERS)
           {
             // Set the dir bits
-            if (CurrentCommand.DirBits & DIR1_BIT)
+            if (OutByte & DIR1_BIT)
             {
               Dir1IO = 1;
             }
@@ -554,7 +556,7 @@ void high_ISR(void)
             {
               Dir1IO = 0;
             }	
-            if (CurrentCommand.DirBits & DIR2_BIT)
+            if (OutByte & DIR2_BIT)
             {
               Dir2IO = 1;
             }
@@ -575,7 +577,7 @@ void high_ISR(void)
           else if (DriverConfiguration == PIC_CONTROLS_EXTERNAL)
           {
             // Set the DIR Bits
-            if (CurrentCommand.DirBits & DIR1_BIT)
+            if (OutByte & DIR1_BIT)
             {
               Dir1AltIO = 1;
             }
@@ -583,7 +585,7 @@ void high_ISR(void)
             {
               Dir1AltIO = 0;
             }	
-            if (CurrentCommand.DirBits & DIR2_BIT)
+            if (OutByte & DIR2_BIT)
             {
               Dir2AltIO = 1;
             }
